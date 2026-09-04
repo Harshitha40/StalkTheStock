@@ -1,0 +1,887 @@
+@import "tailwindcss";
+
+/* =========================================================
+   STOCK ATTENTION — Swiss Finance Design System
+   ========================================================= */
+
+:root {
+  --background: #f7f9fc;
+  --foreground: #0b1220;
+
+  --card: #ffffff;
+  --card-foreground: #0b1220;
+
+  --popover: #ffffff;
+  --popover-foreground: #0b1220;
+
+  --primary: #155eef;
+  --primary-foreground: #ffffff;
+
+  --secondary: #eaf1ff;
+  --secondary-foreground: #123b8f;
+
+  --muted: #eef2f7;
+  --muted-foreground: #64748b;
+
+  --accent: #e9f8f0;
+  --accent-foreground: #087443;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #dfe5ec;
+  --input: #dfe5ec;
+  --ring: #155eef;
+
+  --radius: 0.75rem;
+
+  /* Brand */
+  --brand-blue: #155eef;
+  --brand-blue-dark: #0b3bba;
+  --brand-green: #12a150;
+  --brand-green-dark: #087443;
+
+  /* Finance */
+  --positive: #0f9f5a;
+  --negative: #dc3545;
+  --warning: #d97706;
+
+  /* Swiss ink */
+  --ink: #0b1220;
+  --ink-soft: #334155;
+
+  /* Surfaces */
+  --surface: #ffffff;
+  --surface-soft: #f7f9fc;
+  --surface-blue: #f0f5ff;
+  --surface-green: #effaf4;
+}
+
+.dark {
+  --background: #080d16;
+  --foreground: #f8fafc;
+
+  --card: #0e1624;
+  --card-foreground: #f8fafc;
+
+  --popover: #0e1624;
+  --popover-foreground: #f8fafc;
+
+  --primary: #4c8dff;
+  --primary-foreground: #ffffff;
+
+  --secondary: #14233f;
+  --secondary-foreground: #c9dcff;
+
+  --muted: #151e2d;
+  --muted-foreground: #94a3b8;
+
+  --accent: #0d2a1c;
+  --accent-foreground: #5ee89a;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #263244;
+  --input: #263244;
+  --ring: #4c8dff;
+
+  --surface: #0e1624;
+  --surface-soft: #080d16;
+  --surface-blue: #0c1a32;
+  --surface-green: #0b2117;
+
+  --ink: #f8fafc;
+  --ink-soft: #cbd5e1;
+}
+
+/* =========================================================
+   Tailwind / shadcn theme variables
+   ========================================================= */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* =========================================================
+   Base
+   ========================================================= */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-feature-settings:
+    "rlig" 1,
+    "calt" 1;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #155eef;
+  color: white;
+}
+
+/* =========================================================
+   Swiss Typography
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--foreground);
+  letter-spacing: -0.025em;
+  font-weight: 650;
+}
+
+h1 {
+  letter-spacing: -0.045em;
+}
+
+p {
+  line-height: 1.6;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* =========================================================
+   Scrollbar
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* =========================================================
+   Finance utilities
+   ========================================================= */
+
+.text-positive {
+  color: var(--positive);
+}
+
+.text-negative {
+  color: var(--negative);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.bg-positive {
+  background: var(--surface-green);
+}
+
+.bg-negative {
+  background: #fff1f2;
+}
+
+.bg-warning {
+  background: #fff7ed;
+}
+
+/* =========================================================
+   Swiss grid / layout
+   ========================================================= */
+
+.swiss-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.swiss-rule {
+  height: 1px;
+  width: 100%;
+  background: var(--border);
+}
+
+.section-label {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* =========================================================
+   Finance cards
+   ========================================================= */
+
+.finance-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 8px 30px rgba(15, 23, 42, 0.035);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.finance-card:hover {
+  border-color: #cbd5e1;
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.04),
+    0 14px 40px rgba(15, 23, 42, 0.06);
+}
+
+.dark .finance-card {
+  box-shadow: none;
+}
+
+.dark .finance-card:hover {
+  border-color: #34445b;
+}
+
+/* =========================================================
+   Attention score
+   ========================================================= */
+
+.attention-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 42px;
+  height: 42px;
+
+  border-radius: 12px;
+
+  background: #eaf1ff;
+  color: var(--brand-blue);
+
+  font-size: 0.875rem;
+  font-weight: 800;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.attention-score-high {
+  background: #eaf1ff;
+  color: #155eef;
+}
+
+.attention-score-medium {
+  background: #effaf4;
+  color: #087443;
+}
+
+.attention-score-low {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* =========================================================
+   Reason tags
+   ========================================================= */
+
+.reason-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  padding: 0.3rem 0.65rem;
+
+  background: var(--surface-soft);
+
+  color: var(--ink-soft);
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.reason-tag-blue {
+  border-color: #c9d9ff;
+  background: #f0f5ff;
+  color: #155eef;
+}
+
+.reason-tag-green {
+  border-color: #bce8d0;
+  background: #effaf4;
+  color: #087443;
+}
+
+.reason-tag-red {
+  border-color: #fecdd3;
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.reason-tag-orange {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+/* =========================================================
+   Price movement
+   ========================================================= */
+
+.price-up {
+  color: var(--positive);
+  font-weight: 700;
+}
+
+.price-down {
+  color: var(--negative);
+  font-weight: 700;
+}
+
+.price-flat {
+  color: var(--muted-foreground);
+  font-weight: 700;
+}
+
+.price-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+}
+
+/* =========================================================
+   Market status
+   ========================================================= */
+
+.market-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  color: var(--muted-foreground);
+}
+
+.market-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--positive);
+  box-shadow: 0 0 0 3px rgba(15, 159, 90, 0.12);
+}
+
+/* =========================================================
+   Live / stale data indicator
+   ========================================================= */
+
+.data-fresh {
+  color: var(--positive);
+}
+
+.data-stale {
+  color: var(--warning);
+}
+
+.data-stale::before {
+  content: "●";
+  margin-right: 0.35rem;
+}
+
+/* =========================================================
+   Chart containers
+   ========================================================= */
+
+.chart-container {
+  width: 100%;
+  min-height: 180px;
+
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 49.5%,
+      var(--border) 50%,
+      transparent 50.5%,
+      transparent 100%
+    );
+}
+
+.chart-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(148, 163, 184, 0.12) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(148, 163, 184, 0.12) 1px,
+      transparent 1px
+    );
+
+  background-size: 25% 25%;
+}
+
+/* =========================================================
+   Price comparison bars
+   ========================================================= */
+
+.price-comparison {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.price-comparison-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 90px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.price-comparison-label {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.price-comparison-track {
+  position: relative;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8edf3;
+}
+
+.dark .price-comparison-track {
+  background: #1d2939;
+}
+
+.price-comparison-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brand-blue);
+}
+
+.price-comparison-fill-positive {
+  background: var(--brand-green);
+}
+
+.price-comparison-value {
+  text-align: right;
+  font-size: 0.875rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Metric grid
+   ========================================================= */
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--border);
+}
+
+.metric {
+  min-width: 0;
+  padding: 0.9rem;
+  background: var(--card);
+}
+
+.metric-label {
+  margin-bottom: 0.3rem;
+
+  color: var(--muted-foreground);
+
+  font-size: 0.6875rem;
+  font-weight: 650;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  color: var(--foreground);
+
+  font-size: 1rem;
+  font-weight: 750;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+
+  border-bottom: 1px solid var(--border);
+
+  background: color-mix(
+    in srgb,
+    var(--background) 92%,
+    transparent
+  );
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+
+  color: var(--foreground);
+
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.navbar-mark {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+
+  border-radius: 8px;
+
+  background: var(--brand-blue);
+  color: white;
+
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  box-shadow: 0 4px 12px rgba(21, 94, 239, 0.22);
+}
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+
+.btn-primary {
+  border-radius: 9px;
+  background: var(--brand-blue);
+  color: white;
+  font-weight: 650;
+
+  transition:
+    background 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.btn-primary:hover {
+  background: var(--brand-blue-dark);
+  box-shadow: 0 5px 15px rgba(21, 94, 239, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* =========================================================
+   Inputs
+   ========================================================= */
+
+.finance-input {
+  width: 100%;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  background: var(--card);
+  color: var(--foreground);
+
+  outline: none;
+
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.finance-input:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(21, 94, 239, 0.12);
+}
+
+/* =========================================================
+   Ticker symbol
+   ========================================================= */
+
+.ticker {
+  color: var(--foreground);
+
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  letter-spacing: 0.02em;
+}
+
+.ticker-description {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+/* =========================================================
+   Subtle blue accent
+   ========================================================= */
+
+.blue-accent {
+  position: relative;
+}
+
+.blue-accent::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 3px;
+
+  border-radius: 999px;
+
+  background: var(--brand-blue);
+}
+
+/* =========================================================
+   Green accent
+   ========================================================= */
+
+.green-accent {
+  position: relative;
+}
+
+.green-accent::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 3px;
+
+  border-radius: 999px;
+
+  background: var(--brand-green);
+}
+
+/* =========================================================
+   Loading shimmer
+   ========================================================= */
+
+.skeleton {
+  overflow: hidden;
+  position: relative;
+
+  background: #e9eef5;
+  border-radius: 6px;
+}
+
+.dark .skeleton {
+  background: #182334;
+}
+
+.skeleton::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  transform: translateX(-100%);
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* =========================================================
+   Fade / entrance animations
+   ========================================================= */
+
+.fade-in {
+  animation: fade-in 300ms ease-out both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slide-up 400ms ease-out both;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .swiss-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-comparison-row {
+    grid-template-columns: 75px 1fr 75px;
+    gap: 0.5rem;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-comparison-row {
+    grid-template-columns: 70px 1fr 70px;
+  }
+}
+
+/* =========================================================
+   Accessibility
+   ========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
