@@ -108,6 +108,18 @@ type SearchResult = {
   type: string;
 };
 
+type TopPerformerStock = {
+  ticker: string;
+  name?: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  high: number;
+  low: number;
+  open: number;
+  previousClose: number;
+};
+
 interface DashboardProps {
   user: {
     name: string;
@@ -433,6 +445,29 @@ export function DashboardClient({
   const [calculatorOpen, setCalculatorOpen] =
     useState(false);
 
+  const [topPerformers, setTopPerformers] =
+    useState<TopPerformerStock[]>([]);
+
+  const [loadingTopPerformers, setLoadingTopPerformers] =
+    useState(true);
+
+  async function loadTopPerformers() {
+    try {
+      setLoadingTopPerformers(true);
+      const res = await fetch("/api/stocks/top-performers");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setTopPerformers(data);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load top performers:", err);
+    } finally {
+      setLoadingTopPerformers(false);
+    }
+  }
+
   async function loadAttention() {
     try {
       setLoading(true);
@@ -484,6 +519,7 @@ export function DashboardClient({
 
   useEffect(() => {
     loadAttention();
+    loadTopPerformers();
   }, []);
 
   useEffect(() => {
@@ -554,6 +590,15 @@ export function DashboardClient({
       return;
     }
 
+    // Check if already in watchlist to avoid duplicates
+    if (
+      cleanItems.some(
+        (item) => item.ticker === normalizedTicker
+      )
+    ) {
+      return;
+    }
+
     try {
       setAdding(normalizedTicker);
 
@@ -585,9 +630,88 @@ export function DashboardClient({
         );
       }
 
+      // Optimistically add a placeholder to items so the UI
+      // shows "Watching" immediately without a full re-fetch
+      const placeholder: AttentionItem = {
+        ticker: normalizedTicker,
+        score: 0,
+        level: "LOW",
+        price: null,
+        currentPrice: null,
+        changePercent: null,
+        previousPrice: null,
+        lastSeenPrice: null,
+        lastSeenAt: null,
+        firstVisit: true,
+        updatedAt: new Date().toISOString(),
+        priceMovePct: null,
+        explanation: "We are establishing your baseline.",
+        performanceExplanation: "",
+        newsExplanation: "",
+        reasons: [],
+        breakdown: {
+          priceMove: 0,
+          volume: 0,
+          technicals: 0,
+          gap: 0,
+          news: 0,
+          corporateActions: 0,
+        },
+        metrics: {
+          rsi14: null,
+          volatility20Pct: null,
+          atr14Pct: null,
+          volumeSpike: null,
+          currentVolume: null,
+          averageVolume20: null,
+          sma50: null,
+          sma200: null,
+          week52High: null,
+          week52Low: null,
+          openGapPct: null,
+          newsSentiment: null,
+          newsCount: 0,
+          corporateEventsCount: 0,
+        },
+        news: {
+          score: 0,
+          newHeadlineCount: 0,
+          sentimentDelta: null,
+          currentSentiment: null,
+          previousSentiment: null,
+          reasoning: "",
+          headlines: [],
+        },
+        newCorporateEvents: [],
+      };
+
+      setItems((prev) =>
+        uniqueByTicker([...prev, placeholder])
+      );
+
       setSearch("");
 
-      await loadAttention();
+      // Background re-fetch to sync real data (no loading flash).
+      // Merge instead of replace so optimistic placeholders survive
+      // if Inngest hasn't computed attention metrics yet.
+      fetch("/api/attention", { cache: "no-store" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setItems((prev) => {
+              const fetched = uniqueByTicker(data);
+              const fetchedSet = new Set(
+                fetched.map((i) => i.ticker)
+              );
+              // Keep any placeholder tickers not yet in the DB response
+              const keepPlaceholders = prev.filter(
+                (i) => !fetchedSet.has(i.ticker)
+              );
+              return uniqueByTicker([...fetched, ...keepPlaceholders]);
+            });
+          }
+        })
+        .catch(() => {/* silently ignore background sync errors */});
     } catch (error) {
       console.error(error);
 
@@ -604,6 +728,16 @@ export function DashboardClient({
   const cleanItems = useMemo(
     () => uniqueByTicker(items),
     [items]
+  );
+
+  const watchlistTickers = useMemo(
+    () =>
+      new Set(
+        cleanItems.map((item) =>
+          String(item.ticker).toUpperCase()
+        )
+      ),
+    [cleanItems]
   );
 
   const high =
@@ -829,7 +963,7 @@ export function DashboardClient({
 
         {/* WATCHLIST */}
 
-        <section>
+        <section className="mb-14">
           <div className="mb-5 flex items-end justify-between">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">
@@ -866,6 +1000,132 @@ export function DashboardClient({
                   />
                 )
               )}
+            </div>
+          )}
+        </section>
+
+        {/* TOP PERFORMERS OF THE DAY (AROUND 20) */}
+
+        <section className="mb-14">
+          <div className="mb-5 flex items-end justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-600">
+                  Market Leaders
+                </p>
+              </div>
+
+              <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">
+                Top Performing Stocks Today
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Top market movers and gainers across US exchanges today.
+              </p>
+            </div>
+
+            <span className="rounded-full bg-emerald-50 border border-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+              {topPerformers.length} top gainers
+            </span>
+          </div>
+
+          {loadingTopPerformers ? (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div
+                  key={i}
+                  className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white p-4"
+                />
+              ))}
+            </div>
+          ) : topPerformers.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
+              Top market performer data is temporarily loading.
+            </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {topPerformers.map((stock, idx) => {
+                const isWatchlisted = watchlistTickers.has(stock.ticker);
+                const isPositive = (stock.changePercent ?? 0) >= 0;
+
+                return (
+                  <div
+                    key={stock.ticker}
+                    className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-500">
+                            {idx + 1}
+                          </span>
+                          <a
+                            href={`/dashboard/stocks/${encodeURIComponent(stock.ticker)}`}
+                            className="font-bold text-slate-900 group-hover:text-blue-600 transition"
+                          >
+                            {stock.ticker}
+                          </a>
+                        </div>
+
+                        <span
+                          className={`rounded-md px-2 py-0.5 text-xs font-bold ${
+                            isPositive
+                              ? "bg-emerald-50 text-emerald-600"
+                              : "bg-red-50 text-red-600"
+                          }`}
+                        >
+                          {isPositive ? "+" : ""}
+                          {stock.changePercent !== null && stock.changePercent !== undefined
+                            ? Number(stock.changePercent).toFixed(2)
+                            : "0.00"}
+                          %
+                        </span>
+                      </div>
+
+                      <p className="mt-1 line-clamp-1 text-xs text-slate-400">
+                        {stock.name || stock.ticker}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 flex items-baseline justify-between border-t border-slate-100 pt-3">
+                      <div>
+                        <p className="text-sm font-semibold text-slate-950">
+                          {formatPrice(stock.price)}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {isPositive ? "+" : ""}${Number(stock.change ?? 0).toFixed(2)}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {isWatchlisted ? (
+                          <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-500">
+                            Watching
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={adding === stock.ticker}
+                            onClick={() => addStock(stock.ticker)}
+                            className="rounded-lg bg-slate-900 px-2.5 py-1 text-[11px] font-semibold text-white transition hover:bg-blue-600 disabled:opacity-50"
+                          >
+                            {adding === stock.ticker ? "Adding..." : "+ Watch"}
+                          </button>
+                        )}
+
+                        <a
+                          href={`/dashboard/stocks/${encodeURIComponent(stock.ticker)}`}
+                          aria-label={`View ${stock.ticker} analysis`}
+                          className="rounded-lg border border-slate-200 p-1 text-xs text-slate-400 transition hover:border-slate-300 hover:text-slate-700"
+                        >
+                          →
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </section>
