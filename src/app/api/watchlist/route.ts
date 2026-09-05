@@ -6,6 +6,8 @@ import {
   removeFromWatchlist,
 } from "@/lib/watchlist";
 
+import { inngest } from "@/inngest/client";
+
 export async function GET() {
   try {
     const user =
@@ -89,6 +91,12 @@ export async function POST(
         user.id,
         ticker
       );
+    await inngest.send({
+  name: "stock/watchlist.added",
+  data: {
+    ticker,
+  },
+});
 
     return NextResponse.json(
       stock,
