@@ -2,15 +2,12 @@
 
 import { FormEvent, useState, ChangeEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 
 export default function SignupPage() {
-  const router = useRouter();
-
   const [name, setName] =
     useState("");
 
@@ -39,7 +36,6 @@ export default function SignupPage() {
         name,
         email,
         password,
-        callbackURL: "/dashboard",
       });
 
     if (result.error) {
@@ -51,8 +47,7 @@ export default function SignupPage() {
       return;
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    window.location.href = "/dashboard";
   }
 
   return (

@@ -1,8 +1,6 @@
 import { getDb } from "./mongodb";
-import type {
-  LastSeenSnapshot,
-  MarketSnapshot,
-} from "./types";
+import type { LastSeenSnapshot } from "./types";
+import type { MarketSnapshot } from "./market-snapshot";
 
 export async function getCurrentSnapshot(
   ticker: string

@@ -1,8 +1,8 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
-import clientPromise from "./mongodb";
+import { nextCookies } from "better-auth/next-js";
+import { client } from "./mongodb";
 
-const client = await clientPromise;
 const db = client.db(
   process.env.MONGODB_DB || "stock_attention"
 );
@@ -27,7 +27,12 @@ export const auth = betterAuth({
   },
 
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL ||
-      "http://localhost:3000",
+    process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
   ],
-});
+
+  plugins: [nextCookies()],
+});

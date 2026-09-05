@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { getCurrentUser } from "@/lib/auth-server";
 import { getStockQuote } from "@/lib/finnhub";
+import { getAttentionForTicker } from "@/lib/attention";
 
 const tickerSchema = z
   .string()
@@ -38,18 +39,22 @@ export async function GET(
 
     const symbol = parsedTicker.data.toUpperCase();
 
-    const quote = await getStockQuote(symbol);
+    const [quote, attention] = await Promise.all([
+      getStockQuote(symbol).catch(() => null),
+      getAttentionForTicker(user.id, symbol).catch(() => null),
+    ]);
 
     return NextResponse.json({
       ticker: symbol,
-      price: quote.c,
-      change: quote.d,
-      changePercent: quote.dp,
-      high: quote.h,
-      low: quote.l,
-      open: quote.o,
-      previousClose: quote.pc,
-      timestamp: quote.t,
+      price: quote?.c ?? attention?.price ?? 0,
+      change: quote?.d ?? 0,
+      changePercent: quote?.dp ?? attention?.changePercent ?? 0,
+      high: quote?.h ?? attention?.metrics?.week52High ?? 0,
+      low: quote?.l ?? attention?.metrics?.week52Low ?? 0,
+      open: quote?.o ?? 0,
+      previousClose: quote?.pc ?? 0,
+      timestamp: quote?.t ?? Date.now(),
+      attention,
     });
   } catch (error) {
     console.error("Stock API error:", error);

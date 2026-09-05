@@ -52,9 +52,7 @@ export const refreshMarketData =
             const candles =
               await getCandles(
                 ticker,
-                "D",
-                oneYearAgo,
-                now
+                365
               );
 
             if (

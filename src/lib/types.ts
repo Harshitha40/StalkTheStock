@@ -55,6 +55,32 @@ export interface LastSeenSnapshot {
   seenAt: Date;
 }
 
+export interface CalculatedMetrics {
+  rsi14: number | null;
+  volatility20Pct: number | null;
+  volumeSpike: number | null;
+  sma50: number | null;
+  sma200: number | null;
+  week52High: number | null;
+  week52Low: number | null;
+  openGapPct: number | null;
+  newsSentiment: number | null;
+  newsCount: number;
+  corporateEventsCount: number;
+  currentVolume: number | null;
+  averageVolume20: number | null;
+}
+
+export interface ScoreBreakdown {
+  finalScore: number;
+  priceScore: number;
+  volumeScore: number;
+  technicalScore: number;
+  gapScore: number;
+  newsScore: number;
+  corporateScore: number;
+}
+
 export interface AttentionResult {
   ticker: string;
 
@@ -68,6 +94,8 @@ export interface AttentionResult {
   corporateScore: number;
 
   reasons: string[];
+  metrics?: CalculatedMetrics;
+  scores?: ScoreBreakdown;
 }
 
 export interface NewsItem {
@@ -78,4 +106,4 @@ export interface NewsItem {
   summary: string;
   publishedAt: Date;
   related?: string;
-}
+}

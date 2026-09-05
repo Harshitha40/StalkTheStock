@@ -1,16 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth-server";
 import {
-  addToWatchlist,
   getWatchlist,
+  addToWatchlist,
   removeFromWatchlist,
 } from "@/lib/watchlist";
-import { getMarketSnapshots } from "@/lib/market-snapshot";
-import { inngest } from "@/inngest/client";
 
 export async function GET() {
   try {
-    const user = await getCurrentUser();
+    const user =
+      await getCurrentUser();
 
     if (!user) {
       return NextResponse.json(
@@ -19,56 +18,31 @@ export async function GET() {
       );
     }
 
-    const watchlist = await getWatchlist(user.id);
-
-    const tickers = watchlist.map((item) => item.ticker);
-
-    const snapshots = await getMarketSnapshots(tickers);
-
-    const snapshotMap = new Map(
-      snapshots.map((snapshot) => [
-        snapshot.ticker,
-        snapshot,
-      ])
-    );
-
-    const stocks = watchlist.map((item) => {
-      const snapshot = snapshotMap.get(item.ticker);
-
-      return {
-        _id: item._id,
-        ticker: item.ticker,
-        position: item.position,
-        quote: snapshot
-          ? {
-              price: snapshot.price,
-              change: snapshot.change,
-              changePercent: snapshot.changePercent,
-              high: snapshot.high,
-              low: snapshot.low,
-              open: snapshot.open,
-              previousClose: snapshot.previousClose,
-              timestamp: snapshot.timestamp,
-              fetchedAt: snapshot.fetchedAt,
-            }
-          : null,
-      };
-    });
-
-    return NextResponse.json(stocks);
-  } catch (error) {
-    console.error("Watchlist GET error:", error);
+    const watchlist =
+      await getWatchlist(user.id);
 
     return NextResponse.json(
-      { error: "Failed to load watchlist" },
+      watchlist
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:
+          "Failed to load watchlist",
+      },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: NextRequest
+) {
   try {
-    const user = await getCurrentUser();
+    const user =
+      await getCurrentUser();
 
     if (!user) {
       return NextResponse.json(
@@ -77,53 +51,68 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const body =
+      await request.json();
 
-    if (
-      typeof body.ticker !== "string" ||
-      !body.ticker.trim()
-    ) {
+    const ticker = String(
+      body?.ticker ?? ""
+    )
+      .trim()
+      .toUpperCase();
+
+    if (!ticker) {
       return NextResponse.json(
-        { error: "Ticker is required" },
+        {
+          error:
+            "Ticker is required",
+        },
         { status: 400 }
       );
     }
 
-    const ticker = body.ticker.trim().toUpperCase();
+    if (
+      !/^[A-Z0-9.\-:]+$/.test(
+        ticker
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid ticker",
+        },
+        { status: 400 }
+      );
+    }
 
-    const item = await addToWatchlist(
-      user.id,
-      ticker
-    );
-
-    /*
-     * Ask Inngest to refresh the shared snapshot.
-     *
-     * The scheduled worker remains the primary refresh
-     * mechanism. This event simply helps a newly-added
-     * ticker get populated sooner.
-     */
-    await inngest.send({
-      name: "stock/watchlist.added",
-      data: {
-        ticker,
-      },
-    });
-
-    return NextResponse.json(item);
-  } catch (error) {
-    console.error("Watchlist POST error:", error);
+    const stock =
+      await addToWatchlist(
+        user.id,
+        ticker
+      );
 
     return NextResponse.json(
-      { error: "Failed to add stock" },
+      stock,
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:
+          "Failed to add stock",
+      },
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(
+  request: NextRequest
+) {
   try {
-    const user = await getCurrentUser();
+    const user =
+      await getCurrentUser();
 
     if (!user) {
       return NextResponse.json(
@@ -132,31 +121,38 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const ticker =
+      request.nextUrl.searchParams
+        .get("ticker")
+        ?.trim()
+        .toUpperCase();
 
-    if (
-      typeof body.ticker !== "string" ||
-      !body.ticker.trim()
-    ) {
+    if (!ticker) {
       return NextResponse.json(
-        { error: "Ticker is required" },
+        {
+          error:
+            "Ticker is required",
+        },
         { status: 400 }
       );
     }
 
     await removeFromWatchlist(
       user.id,
-      body.ticker
+      ticker
     );
 
     return NextResponse.json({
       success: true,
     });
   } catch (error) {
-    console.error("Watchlist DELETE error:", error);
+    console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to remove stock" },
+      {
+        error:
+          "Failed to remove stock",
+      },
       { status: 500 }
     );
   }
