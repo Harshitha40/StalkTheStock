@@ -743,42 +743,6 @@ The application follows a server-first architecture.
 
 ------------------------------------------------------------------------
 
-# 17. Product Snapshots
-
-Place screenshots in:
-
-``` text
-docs/
-└── screenshots/
-    ├── landing.png
-    ├── dashboard.png
-    ├── stock-detail.png
-    ├── attention.png
-    └── calculator.png
-```
-
-### Landing Page
-
-![Landing Page](docs/screenshots/landing.png)
-
-### Personalized Dashboard
-
-![Dashboard](docs/screenshots/dashboard.png)
-
-### Stock Intelligence
-
-![Stock Detail](docs/screenshots/stock-detail.png)
-
-### Attention Breakdown
-
-![Attention Breakdown](docs/screenshots/attention.png)
-
-### Stock Calculator
-
-![Stock Calculator](docs/screenshots/calculator.png)
-
-------------------------------------------------------------------------
-
 # 18. How It Helps Groww Users
 
 StalkTheStock is designed to make stock tracking **faster, clearer and
