@@ -290,10 +290,82 @@ export default function StockDetail({
 
     setData(normalized);
   } catch (error) {
-    console.error(
-      "Stock detail load error:",
+    console.warn(
+      "Primary attention fetch failed, attempting fallback to /api/stocks:",
       error
     );
+
+    try {
+      const fallbackRes = await fetch(
+        `/api/stocks/${encodeURIComponent(ticker)}`,
+        { cache: "no-store" }
+      );
+      if (fallbackRes.ok) {
+        const stock = await fallbackRes.json();
+        const fallbackNormalized: Attention = {
+          ticker: ticker.toUpperCase(),
+          score: stock.attention?.score ?? 0,
+          level: stock.attention?.level ?? "LOW",
+          price: stock.price ?? 0,
+          currentPrice: stock.price ?? 0,
+          changePercent: stock.changePercent ?? 0,
+          previousPrice: stock.previousClose ?? null,
+          lastSeenPrice: null,
+          lastSeenAt: null,
+          firstVisit: true,
+          updatedAt: new Date().toISOString(),
+          priceMovePct: stock.changePercent ?? null,
+          explanation: stock.attention?.explanation ?? "Live market data loaded.",
+          performanceExplanation: "",
+          newsExplanation: "",
+          reasons: stock.attention?.reasons ?? [],
+          breakdown: stock.attention?.breakdown ?? {
+            priceMove: 0,
+            volume: 0,
+            technicals: 0,
+            gap: 0,
+            news: 0,
+            corporateActions: 0,
+          },
+          metrics: stock.attention?.metrics ?? {
+            rsi14: null,
+            volatility20Pct: null,
+            atr14Pct: null,
+            volumeSpike: null,
+            currentVolume: null,
+            averageVolume20: null,
+            sma50: null,
+            sma200: null,
+            week52High: stock.high ?? null,
+            week52Low: stock.low ?? null,
+            openGapPct: null,
+            newsSentiment: null,
+            newsCount: 0,
+            corporateEventsCount: 0,
+          },
+          news: stock.attention?.news ?? {
+            score: 0,
+            newHeadlineCount: 0,
+            sentimentDelta: null,
+            currentSentiment: null,
+            previousSentiment: null,
+            reasoning: "",
+            headlines: [],
+          },
+          corporateEvents: stock.attention?.corporateEvents ?? [],
+          newCorporateEvents: [],
+          chart: stock.attention?.chart ?? [
+            {
+              timestamp: Math.floor(Date.now() / 1000),
+              price: stock.price ?? 0,
+            },
+          ],
+        };
+        setData(fallbackNormalized);
+      }
+    } catch (fallbackError) {
+      console.error("Fallback load failed:", fallbackError);
+    }
   } finally {
     setLoading(false);
   }
