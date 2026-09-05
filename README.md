@@ -6,6 +6,8 @@ StalkTheStock is a personalized stock intelligence platform that
 transforms a static watchlist into a prioritized, explainable stream of
 market changes.
 
+Here’s what’s exciting: every stock in your watchlist doesn’t just show you its price — it tells you what’s actually happening around it. You get the latest headlines affecting that stock right alongside it, and with one click, you’re taken directly to the official news source to read the full story
+
 Instead of forcing users to manually open every stock, inspect charts,
 check indicators, scan news, and remember what changed, StalkTheStock
 compares the **current market state with the user's last-seen state**
